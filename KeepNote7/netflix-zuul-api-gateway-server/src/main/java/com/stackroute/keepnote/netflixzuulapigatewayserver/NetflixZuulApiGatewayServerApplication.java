@@ -2,6 +2,8 @@ package com.stackroute.keepnote.netflixzuulapigatewayserver;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+import org.springframework.cloud.netflix.zuul.EnableZuulProxy;
 
 /*
  * The @SpringBootApplication annotation is equivalent to using @Configuration, @EnableAutoConfiguration 
@@ -10,7 +12,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * Add @EnableZuulProxy and @EnableDiscoveryClient
  * 
  */
-
+@SpringBootApplication
+@EnableZuulProxy
+@EnableDiscoveryClient
 public class NetflixZuulApiGatewayServerApplication {
 
 	public static void main(String[] args) {

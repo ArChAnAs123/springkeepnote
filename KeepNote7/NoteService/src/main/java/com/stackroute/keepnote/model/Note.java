@@ -18,68 +18,99 @@ public class Note {
 
 	    // getters & setters
 
-	    public int getNoteId() {
-	        return 0;
-	    }
+	private int noteId;
+	private String noteTitle;
+	private String noteContent;
+	private String noteStatus;
+	private Date noteCreationDate;
+	private String noteCreatedBy;
+	private Category category;
+	private List<Reminder> reminders;
+	
+	public Note() {
+	}
 
-	    public void setNoteId(int noteId) {
-	     
-	    }
+	public Note(int noteId, String noteTitle, String noteContent, String noteStatus, Date noteCreationDate,
+			String noteCreatedBy, Category category, List<Reminder> reminders) {
+		this.noteId = noteId;
+		this.noteTitle = noteTitle;
+		this.noteContent = noteContent;
+		this.noteStatus = noteStatus;
+		this.noteCreationDate = noteCreationDate;
+		this.noteCreatedBy = noteCreatedBy;
+		this.category = category;
+		this.reminders = reminders;
+	}
 
-	    public String getNoteTitle() {
-	        return null;
-	    }
+	public int getNoteId() {
+		return noteId;
+	}
 
-	    public void setNoteTitle(String noteTitle) {
-	       
-	    }
+	public void setNoteId(int noteId) {
+		this.noteId = noteId;
+	}
 
-	    public String getNoteContent() {
-	        return null;
-	    }
+	public String getNoteTitle() {
+		return noteTitle;
+	}
 
-	    public void setNoteContent(String noteContent) {
-	       
-	    }
+	public void setNoteTitle(String noteTitle) {
+		this.noteTitle = noteTitle;
+	}
 
-	    public String getNoteStatus() {
-	        return null;
-	    }
+	public String getNoteContent() {
+		return noteContent;
+	}
 
-	    public void setNoteStatus(String noteStatus) {
-	       
-	    }
+	public void setNoteContent(String noteContent) {
+		this.noteContent = noteContent;
+	}
 
-	    public Date getNoteCreationDate() {
-	        return null;
-	    }
+	public String getNoteStatus() {
+		return noteStatus;
+	}
 
-	    public void setNoteCreationDate(Date noteCreationDate) {
-	        
-	    }
+	public void setNoteStatus(String noteStatus) {
+		this.noteStatus = noteStatus;
+	}
 
-	    public String getNoteCreatedBy() {
-	        return null;
-	    }
+	public Date getNoteCreationDate() {
+		return noteCreationDate;
+	}
 
-	    public void setNoteCreatedBy(String noteCreatedBy) {
-	        
-	    }
+	public void setNoteCreationDate(Date noteCreationDate) {
+		this.noteCreationDate = noteCreationDate;
+	}
 
-	    public Category getCategory() {
-	        return null;
-	    }
+	public String getNoteCreatedBy() {
+		return noteCreatedBy;
+	}
 
-	    public void setCategory(Category category) {
-	       
-	    }
+	public void setNoteCreatedBy(String noteCreatedBy) {
+		this.noteCreatedBy = noteCreatedBy;
+	}
 
-	    public List<Reminder> getReminders() {
-	        return null;
-	    }
+	public Category getCategory() {
+		return category;
+	}
 
-	    public void setReminders(List<Reminder> reminders) {
-	    
-	    }
+	public void setCategory(Category category) {
+		this.category = category;
+	}
+
+	public List<Reminder> getReminders() {
+		return reminders;
+	}
+
+	public void setReminders(List<Reminder> reminders) {
+		this.reminders = reminders;
+	}
+
+	@Override
+	public String toString() {
+		return "Note [noteId=" + noteId + ", noteTitle=" + noteTitle + ", noteContent=" + noteContent + ", noteStatus="
+				+ noteStatus + ", noteCreationDate=" + noteCreationDate + ", noteCreatedBy=" + noteCreatedBy
+				+ ", category=" + category + ", reminders=" + reminders + "]";
+	}
 	
 }

@@ -1,8 +1,0 @@
-{
-  "workflow": "OpenJDK8SpringMySQLMongoApp",
-  "scores": {
-    "commanderTests":45,
-    "cadetTests":45,
-    "pmd": 10
-  }
-}

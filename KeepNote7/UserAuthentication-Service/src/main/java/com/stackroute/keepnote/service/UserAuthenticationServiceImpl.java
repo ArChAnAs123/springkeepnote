@@ -1,8 +1,15 @@
 package com.stackroute.keepnote.service;
 
+import java.util.NoSuchElementException;
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.stackroute.keepnote.exception.UserAlreadyExistsException;
 import com.stackroute.keepnote.exception.UserNotFoundException;
 import com.stackroute.keepnote.model.User;
+import com.stackroute.keepnote.repository.UserAutheticationRepository;
 
 /*
 * Service classes are used here to implement additional business logic/validation 
@@ -15,7 +22,7 @@ import com.stackroute.keepnote.model.User;
 * */
 
 
-
+@Service
 public class UserAuthenticationServiceImpl implements UserAuthenticationService {
 
     /*
@@ -24,11 +31,15 @@ public class UserAuthenticationServiceImpl implements UserAuthenticationService 
 	 * object using the new keyword.
 	 */
 
+	@Autowired
+	private UserAutheticationRepository authRepository;
+	
+     public UserAuthenticationServiceImpl(UserAutheticationRepository authRepository) {
 
+    	 this.authRepository=authRepository;
+     }
 
-
-
-     /*
+	/*
 	 * This method should be used to validate a user using userId and password.
 	 *  Call the corresponding method of Respository interface.
 	 * 
@@ -37,7 +48,13 @@ public class UserAuthenticationServiceImpl implements UserAuthenticationService 
     public User findByUserIdAndPassword(String userId, String password) throws UserNotFoundException {
 
       
-        return null;
+    	User user =  authRepository.findByUserIdAndUserPassword(userId, password);
+    	
+    	if(user!= null) {
+    		return user;
+    	}
+        
+    	throw new UserNotFoundException("User Not Found!");
     }
 
 
@@ -50,7 +67,26 @@ public class UserAuthenticationServiceImpl implements UserAuthenticationService 
 
     @Override
     public boolean saveUser(User user) throws UserAlreadyExistsException {
+    	
+    	
+    	Optional<User> user2 = authRepository.findById(user.getUserId());
+    	
+    	try {
+    		
+    		if(user2!= null 
+        			&& !user2.isPresent()) {
+        		System.out.println(user);
+        		if(user!= null) {
+        			User user3 = authRepository.save(user);
+        			return user3 != null ? true : false;
+        		}
+        	}
+			
+		} catch (NoSuchElementException e) {
+			throw new UserAlreadyExistsException("already exists!");
+		}
+    	
+    	throw new UserAlreadyExistsException("already exists!");
        
-        return false;
     }
 }

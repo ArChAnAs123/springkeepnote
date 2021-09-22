@@ -2,10 +2,17 @@ package com.stackroute.keepnote.model;
 
 import java.util.Date;
 
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
+
+
+
 /*
  * Please note that this class is annotated with @Document annotation
  * @Document identifies a domain object to be persisted to MongoDB.
  *  */
+@Document
 public class User {
 
 	/*
@@ -17,29 +24,103 @@ public class User {
 	 * method.The value of userAddedDate should not be accepted from the user but
 	 * should be always initialized with the system date.
 	 */
+	@Id
+	private String userId;
+	private String userName;
+    private String firstName;
+    private String lastName;
+	private String userPassword;
+	private String userMobile;
+	private Date userAddedDate;
+	private String userRole;
+	
 	public User() {
 	}
-	public User(String string, String string1, String string2, String string3, Date date) {
-	}
-	public String getUserId() {
-		return null;
-	}
-	public void setUserId(String string) {
-	}
-	public void setUserName(String string) {
-	}
-	public String getUserPassword() {
-		return null;
-	}
-	public void setUserPassword(String string) {
-	}
-	public String getUserMobile() {
-		return null;
-	}
-	public void setUserMobile(String string) {
-	}
-	public void setUserAddedDate(Date date) {
+
+	public User(String userId, String userName, String firstName, String lastName, String userPassword,
+			String userMobile, Date userAddedDate, String userRole) {
+		super();
+		this.userId = userId;
+		this.userName = userName;
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.userPassword = userPassword;
+		this.userMobile = userMobile;
+		this.userAddedDate = userAddedDate;
+		this.userRole = userRole;
 	}
 
+
+
+	public String getUserId() {
+		return userId;
+	}
+
+	public void setUserId(String userId) {
+		this.userId = userId;
+	}
+
+	public String getUserName() {
+		return userName;
+	}
+
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
+
+	public String getUserPassword() {
+		return userPassword;
+	}
+
+	public void setUserPassword(String userPassword) {
+		this.userPassword = userPassword;
+	}
+
+	public String getUserMobile() {
+		return userMobile;
+	}
+
+	public void setUserMobile(String userMobile) {
+		this.userMobile = userMobile;
+	}
+
+	public Date getUserAddedDate() {
+		return userAddedDate;
+	}
+
+	public void setUserAddedDate(Date userAddedDate) {
+		this.userAddedDate = userAddedDate;
+	}
+
+	public String getFirstName() {
+		return firstName;
+	}
+
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
+
+	public String getLastName() {
+		return lastName;
+	}
+
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
+	}
+
+	public String getUserRole() {
+		return userRole;
+	}
+
+	public void setUserRole(String userRole) {
+		this.userRole = userRole;
+	}
+
+	@Override
+	public String toString() {
+		return "User [userId=" + userId + ", userName=" + userName + ", firstName=" + firstName + ", lastName="
+				+ lastName + ", userPassword=" + userPassword + ", userMobile=" + userMobile + ", userAddedDate="
+				+ userAddedDate + ", userRole=" + userRole + "]";
+	}
 	 
 }

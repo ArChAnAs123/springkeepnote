@@ -1,5 +1,25 @@
 package com.stackroute.keepnote.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.stackroute.keepnote.exception.CategoryDoesNoteExistsException;
+import com.stackroute.keepnote.exception.CategoryNotCreatedException;
+import com.stackroute.keepnote.exception.CategoryNotFoundException;
+import com.stackroute.keepnote.model.Category;
+import com.stackroute.keepnote.service.CategoryService;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+
 /*
  * As in this assignment, we are working with creating RESTful web service, hence annotate
  * the class with @RestController annotation.A class annotated with @Controller annotation
@@ -7,11 +27,9 @@ package com.stackroute.keepnote.controller;
  * with @Controller annotation, it will return the data directly in a serialized 
  * format. Starting from Spring 4 and above, we can use @RestController annotation which 
  * is equivalent to using @Controller and @ResposeBody annotation
- * 
- * @CrossOrigin,@EnableFeignClients and @RibbonClient needs to be added 
- * 
  */
-
+@RestController
+@Api
 public class CategoryController {
 
 	/*
@@ -19,6 +37,15 @@ public class CategoryController {
 	 * Constructor-based autowiring) Please note that we should not create any
 	 * object using the new keyword
 	 */
+	
+	@Autowired
+	private CategoryService categoryService;
+	
+
+	public CategoryController(CategoryService categoryService) {
+
+		this.categoryService=categoryService;
+	}
 
 	/*
 	 * Define a handler method which will create a category by reading the
@@ -34,6 +61,19 @@ public class CategoryController {
 	 * method".
 	 */
 	
+	@ApiOperation(value="Create a Category")
+	@PostMapping("/api/v1/category")
+	public ResponseEntity<Category> createCategory(@RequestBody Category category) {
+		
+		try {
+			Category cat1 = categoryService.createCategory(category);
+			return new ResponseEntity<Category>(cat1, HttpStatus.CREATED);
+		} catch (CategoryNotCreatedException e) {
+			return new ResponseEntity<>(HttpStatus.CONFLICT);
+		}
+		
+	}
+	
 	/*
 	 * Define a handler method which will delete a category from a database.
 	 * 
@@ -46,6 +86,25 @@ public class CategoryController {
 	 * method" where "id" should be replaced by a valid categoryId without {}
 	 */
 
+	@ApiOperation(value="Delete a Category")
+	@DeleteMapping("/api/v1/category/{id}")
+	public ResponseEntity<?> deleteCategory(@PathVariable String id) {
+		
+		boolean flag= false;
+		
+		
+		try {
+			flag = categoryService.deleteCategory(id);
+			if(flag) {
+				return new ResponseEntity<>(HttpStatus.OK);
+			}else {
+				return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+			}
+		} catch (CategoryDoesNoteExistsException e) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
+				
+	}
 	
 	/*
 	 * Define a handler method which will update a specific category by reading the
@@ -58,6 +117,19 @@ public class CategoryController {
 	 * method.
 	 */
 	
+
+	@ApiOperation(value="Update a Specific Category")
+	@PutMapping("/api/v1/category/{id}")
+	public ResponseEntity<?> updateCategory(@RequestBody Category category, @PathVariable String id) {
+		
+		Category category1 = categoryService.updateCategory(category, id);
+		
+		if(category1!= null ) {
+			return new ResponseEntity<Category>(category, HttpStatus.OK);
+		}
+		return new ResponseEntity<>(HttpStatus.CONFLICT);
+	}
+	
 	/*
 	 * Define a handler method which will get us the category by a userId.
 	 * 
@@ -67,6 +139,16 @@ public class CategoryController {
 	 * 
 	 * This handler method should map to the URL "/api/v1/category" using HTTP GET method
 	 */
-
+	@ApiOperation(value="Get All Category by UserId")
+	@GetMapping("/api/v1/category/{id}")
+	public ResponseEntity<?> getCategoryById(@PathVariable String id) {
+		
+			try {
+				return new ResponseEntity<>(categoryService.getCategoryById(id),HttpStatus.OK);
+			} catch (CategoryNotFoundException e) {
+				return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+			}
+		
+	}
 
 }

@@ -1,9 +1,18 @@
 package com.stackroute.keepnote.service;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.stackroute.keepnote.exception.NoteNotFoundExeption;
 import com.stackroute.keepnote.model.Note;
+import com.stackroute.keepnote.model.NoteUser;
+import com.stackroute.keepnote.repository.NoteRepository;
 
 /*
 * Service classes are used here to implement additional business logic/validation 
@@ -14,7 +23,7 @@ import com.stackroute.keepnote.model.Note;
 * better. Additionally, tool support and additional behavior might rely on it in the 
 * future.
 * */
-
+@Service
 public class NoteServiceImpl implements NoteService{
 
 	/*
@@ -23,10 +32,52 @@ public class NoteServiceImpl implements NoteService{
 	 * object using the new keyword.
 	 */
 	
+	@Autowired
+	private NoteRepository noteRepository;
+	
+			
+	public NoteServiceImpl(NoteRepository noteRepository) {
+		this.noteRepository = noteRepository;
+		
+	}
+
 	/*
 	 * This method should be used to save a new note.
 	 */
 	public boolean createNote(Note note) {
+		
+		
+		NoteUser noteUser = new NoteUser();
+		if(note!= null && note.getNoteCreatedBy()!= null) {
+			note.setNoteCreationDate(new Date());
+			List<Note> notes = null;
+			
+			notes = getAllNoteByUserId(note.getNoteCreatedBy());
+			if(notes!= null && !notes.isEmpty()) {
+				
+				notes.add(note);
+				noteUser.setNotes(notes);
+				noteUser.setUserId(note.getNoteCreatedBy());
+				NoteUser noteUser2=  noteRepository.save(noteUser);
+				System.out.println("noteUser2 Update:::: "+noteUser2);
+				if(noteUser2!=null) {
+					return true;
+				}
+				
+			}else {
+
+				notes = new ArrayList<>();
+				notes.add(note);
+				noteUser.setNotes(notes);
+				noteUser.setUserId(note.getNoteCreatedBy());
+				
+				NoteUser noteUser2=  noteRepository.insert(noteUser);
+				System.out.println("noteUser2 Insert:::: "+noteUser2);
+				if(noteUser2!=null) {
+					return true;
+				}
+			}
+		}
 		
 		return false;
 	}
@@ -36,6 +87,25 @@ public class NoteServiceImpl implements NoteService{
 	
 	public boolean deleteNote(String userId, int noteId) {
 		
+		if(userId!= null) {
+			
+			Note note = null;
+			try {
+				note = getNoteByNoteId(userId, noteId);
+			} catch (NoteNotFoundExeption e) {
+				throw new NullPointerException();
+			}
+			if(note!= null) {
+				NoteUser noteUser = new NoteUser();
+				List<Note> notes = new ArrayList<>();
+				notes.add(note);
+				noteUser.setNotes(notes);
+				noteUser.setUserId(userId);
+				noteRepository.delete(noteUser);
+				return true;
+			}
+		}
+		
 		return false;
 	}
 	
@@ -43,6 +113,12 @@ public class NoteServiceImpl implements NoteService{
 
 	
 	public boolean deleteAllNotes(String userId) {
+		
+		if(userId!= null) {
+			
+			noteRepository.deleteAllByUserId(userId);
+			return true;
+		}
 		
 		return false;
 	}
@@ -52,7 +128,32 @@ public class NoteServiceImpl implements NoteService{
 	 */
 	public Note updateNote(Note note, int id, String userId) throws NoteNotFoundExeption {
 		
-		return null;
+		List<Note> notes = null;
+		if(userId != null) {
+			
+			 getNoteByNoteId(userId, id);
+			
+			notes = getAllNoteByUserId(userId);
+			//note1 =  getNoteByNoteId(userId, id);
+			if(note!= null && notes != null && !notes.isEmpty()) {
+				NoteUser noteUser = new NoteUser();
+				List<Note> newNotes = new ArrayList<>();
+				for (Note note2 : notes) {
+					if(note2.getNoteId()!=id) {
+						newNotes.add(note2);
+					}
+				}
+				
+				newNotes.add(note);
+				noteUser.setNotes(newNotes);
+				noteUser.setUserId(userId);
+				noteRepository.save(noteUser);
+				return note;
+			}
+			
+		}
+		
+		throw new NoteNotFoundExeption("Note not found");
 	}
 
 	/*
@@ -60,7 +161,28 @@ public class NoteServiceImpl implements NoteService{
 	 */
 	public Note getNoteByNoteId(String userId, int noteId) throws NoteNotFoundExeption {
 		
-		return null;
+		try {
+			if(userId!= null && noteId > 0) {
+				
+				Optional<NoteUser> optional =  noteRepository.findById(userId);
+				if(optional.isPresent() && optional.get().getNotes()!= null) {
+					
+					Iterator<Note> notes = optional.get().getNotes().iterator();
+					while (notes.hasNext()) {
+						Note note = (Note) notes.next();
+						if(note.getNoteId() ==noteId ) {
+							 return  note;
+						}
+					}
+					return null;
+				}
+			}
+			
+		} catch (Exception e) {
+			throw new NoteNotFoundExeption("Note Not Found!");
+		}
+		
+		throw new NoteNotFoundExeption("Note Not Found!");
 	}
 
 	/*
@@ -68,6 +190,16 @@ public class NoteServiceImpl implements NoteService{
 	 */
 	public List<Note> getAllNoteByUserId(String userId) {
 		
+		if(userId!= null) {
+			
+			Optional<NoteUser> optional =  noteRepository.findById(userId);
+			
+			if(optional.isPresent() && optional.get().getNotes()!= null) {
+				
+				return optional.get().getNotes();
+			}
+		}
+			
 		return null;
 	}
 

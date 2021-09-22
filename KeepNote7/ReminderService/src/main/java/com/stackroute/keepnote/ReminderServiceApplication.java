@@ -6,6 +6,7 @@ import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import com.stackroute.keepnote.jwtfilter.JwtFilter;
@@ -21,6 +22,8 @@ import brave.sampler.Sampler;
  */
 
 @SpringBootApplication
+@EnableAspectJAutoProxy
+@EnableDiscoveryClient
 public class ReminderServiceApplication {
 
 	/*
@@ -30,8 +33,11 @@ public class ReminderServiceApplication {
 	 */
 	@Bean
 	public FilterRegistrationBean jwtFilter() {
-		return null;
-	}
+		  final FilterRegistrationBean registrationBean = new FilterRegistrationBean();
+			registrationBean.setFilter(new JwtFilter());
+			registrationBean.addUrlPatterns("/api/v1/*");
+			return registrationBean;
+	    }
 
 	/*
 	 * Define the bean for WebMvcConfigurer. Create a new WebMvcConfigurerAdapter object 
@@ -40,7 +46,12 @@ public class ReminderServiceApplication {
 	
 	@Bean
     public WebMvcConfigurer corsConfigurer() {
-        return null;
+		return new WebMvcConfigurer() {
+            @Override
+            public void addCorsMappings(CorsRegistry registry) {
+                registry.addMapping("/**").allowedOrigins("*");
+            }
+        };
     }
 
 	

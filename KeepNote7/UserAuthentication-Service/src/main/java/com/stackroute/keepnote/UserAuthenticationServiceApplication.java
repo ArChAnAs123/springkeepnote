@@ -2,7 +2,9 @@ package com.stackroute.keepnote;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.context.annotation.Bean;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import brave.sampler.Sampler;
@@ -16,6 +18,7 @@ import brave.sampler.Sampler;
  */
 
 @SpringBootApplication
+@EnableDiscoveryClient
 public class UserAuthenticationServiceApplication {
 
 
@@ -26,7 +29,12 @@ public class UserAuthenticationServiceApplication {
 	
 	@Bean
     public WebMvcConfigurer corsConfigurer() {
-        return null;
+		return new WebMvcConfigurer() {
+            @Override
+            public void addCorsMappings(CorsRegistry registry) {
+                registry.addMapping("/**").allowedOrigins("*");
+            }
+        };
     }
 
 	@Bean
