@@ -1,0 +1,27 @@
+spring:
+  data:
+    mongodb:
+      username: ${MONGO_USERNAME}
+      password: ${MONGO_PASSWORD}
+      database: ${MONGO_DATABASE}
+      port: ${MONGO_PORT}
+      host: ${MONGO_HOST}
+#     database: userdb
+#     port: 27017
+#     host: localhost
+  application:
+    name: note-service
+server:
+  port: 9300
+eureka:
+  client:
+    service-url:
+      default-zone: http://localhost:8761/eureka
+spring:
+  zipkin:
+    base-url: http://localhost:9411/  
+spring:
+  zipkin:
+    locator:
+      discovery:
+        enable: true
